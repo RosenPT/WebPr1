@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: ./ProjectApi
+    image: projectapi
+    ports:
+      - "5001:5001"
+    networks:
+      - mynetwork
+
+  mvc:
+    build:
+      context: ./ProjectMVC
+    image: projectmvc
+    ports:
+      - "5000:5000"
+    depends_on:
+      - api
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

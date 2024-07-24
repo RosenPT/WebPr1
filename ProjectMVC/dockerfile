@@ -1,0 +1,17 @@
+# Use the official .NET 8 SDK image to build the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ProjectMVC/ProjectMVC.csproj ProjectMVC/
+RUN dotnet restore ProjectMVC/ProjectMVC.csproj
+COPY . .
+WORKDIR /src/ProjectMVC
+RUN dotnet build ProjectMVC.csproj -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish ProjectMVC.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 5000
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "ProjectMVC.dll"]
